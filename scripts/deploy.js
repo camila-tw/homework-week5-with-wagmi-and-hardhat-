@@ -1,12 +1,12 @@
 const hre = require("hardhat");
 
 async function main() {
-  const Counter = await hre.ethers.getContractFactory("Counter");
-  const counter = await Counter.deploy();
+  const KnotNFT = await hre.ethers.getContractFactory("KnotNFT");
+  const knotNFT = await KnotNFT.deploy();
 
-  await counter.deployed();
+  await knotNFT.deployed();
 
-  console.log("Deployed to:", counter.address);
+  console.log("Deployed to:", knotNFT.address);
 }
 
 main()

@@ -14,6 +14,9 @@ module.exports = {
       url: ENDPOINT_URL,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    hardhat: {
+      chainId: 1337
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
