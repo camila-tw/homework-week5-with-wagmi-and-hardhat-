@@ -9,7 +9,7 @@ function App() {
   const { data: account} = useAccount();
   const { activeChain, switchNetwork } = useNetwork( { chainId: chain.rinkeby.id });
   const { disconnect } = useDisconnect();
-  const [ addWhitelistAddress, setWhitelistAddress] = React.useState(null);
+  const [ addAddress, setWhitelistAddress] = React.useState(null);
 
   /**
    * @dev 合約互動：查詢已鑄造數量
@@ -64,7 +64,7 @@ function App() {
   /**
    * @dev 合約互動：查詢是否在白名單
    */
-   const { data: isInWhitelist} = useContractRead(
+   const { data: checkIsInWhitelist} = useContractRead(
     {
       addressOrName: contractAddress,
       contractInterface: contractABI,
@@ -76,30 +76,30 @@ function App() {
   );
 
   const isAddressMintable = () => {
-    if (isOwner) {
+    if (isOwner()) {
       return true;
     }
-    return isInWhitelist;
+    return checkIsInWhitelist;
   };
 
    /**
    * @dev 合約互動：添加白名單
    */
-  //  const { addToWhitelist } = useContractWrite(
-  //   {
-  //     addressOrName: contractAddress,
-  //     contractInterface: contractABI,
-  //   },
-  //   'addToWhitelist',
-  //   {
-  //     args: [addWhitelistAddress],
-  //     overrides: 
-  //     {
-  //       gasLimit: 3000000,
-  //       value: ethers.utils.parseEther("0.005"),
-  //     },
-  //   }
-  // );
+   const { write:addToWhitelist } = useContractWrite(
+    {
+      addressOrName: contractAddress,
+      contractInterface: contractABI,
+    },
+    'addToWhitelist',
+    {
+      args: [addAddress],
+    }
+  );
+  
+  const addAddressToWhitelistButtonClick = () => {
+    addToWhitelist();
+  };
+
   /**
    * @dev 合約互動：查詢售價
    */
@@ -179,10 +179,11 @@ function App() {
 
   const isOwner = () => {
     let ownerAddr = ownerAddress;
-    return (ownerAddr === account.address);
+    if (account && ownerAddr) {
+      return (ownerAddr === account.address);
+    }
+    return false;
   };
-
-  console.log("input:" + addWhitelistAddress);
 
   return (
     <div className="App">
@@ -197,8 +198,8 @@ function App() {
             <h2> NFT Content：</h2>
             { totalSupply && <div> 已鑄造： { totalSupply.toNumber() } </div> }
             { accountBalance && <div> 擁有數量：{ accountBalance.toNumber() } </div> }
-            <div>是否在白名單： {isInWhitelist?"Yes":"No"}</div> 
-            <h2> Sales Content：</h2>
+            <div>是否在白名單： {checkIsInWhitelist?"Yes":"No"}</div> 
+            <h2> Sale Content：</h2>
             <div> 銷售金額： {price.toString()} ETH</div>
             { maxMintCount && <div> 總發行量：{ maxMintCount.toNumber() }</div> }
             { mintableCount && <div> 剩餘可售：{ mintableCount.toNumber() }</div> }
@@ -212,13 +213,13 @@ function App() {
             {
               isOwner() && <div>
                     <h2> 合約操作 for owner：</h2>
-                    {/* <input
+                    {<input
                       type="text"
-                      value={addWhitelistAddress}
+                      value={addAddress}
                       onChange={(event) => setWhitelistAddress(event.target.value)}
                       placeholder="input a address for whitelist"
-                    /> */}
-                    {/* { activeChain && <button onClick={addToWhitelist}>add to whitelist</button> } */}
+                    /> }
+                    { activeChain && <button onClick={addAddressToWhitelistButtonClick}>添加到白名單</button> }
               </div>
             }
             
