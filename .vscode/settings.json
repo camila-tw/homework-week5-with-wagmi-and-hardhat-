@@ -1,6 +1,9 @@
 {
     "commentTranslate.multiLineMerge": true,
     "cSpell.words": [
+        "KNFT",
+        "mintable",
+        "nomiclabs",
         "wagmi"
     ]
 }
