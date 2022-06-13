@@ -2,7 +2,7 @@
 + 使用 Wagmi 來串連自己撰寫的 ERC721
 + 使用 Hardhat 並透過本地測試鏈來與 Metamask 連結，實現 Dapp 互動
 
-[Demo網址](https://62a7407b552b2d48b3719365--camila-krypto-homework-week5.netlify.app)
+[Demo網址](https://62a751806c35cc008f3c5fd2--camila-krypto-homework-week5.netlify.app)
 
 ### 網頁截圖
 ![](https://i.imgur.com/iPVGHb8.png)
