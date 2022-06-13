@@ -17,9 +17,10 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     //initialize
     //---------------
     
-    uint256 _currentMintCount = 0;  //當前已經mint的數量
-    uint256 public sellPrice;       //NFT售價
-    uint256 public saleStartTime;   //開始販售時間
+    uint256 _currentMintCount = 0;                  //當前已經mint的數量
+    uint256 public sellPrice;                       //NFT售價
+    uint256 public saleStartTime;                   //開始販售時間
+    mapping(address => bool) public whitelist;      //白名單
     
     //鑄造指定NFT
     constructor() ERC721("Knot NFT", "KNFT") {
@@ -52,6 +53,7 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     */
     function safeMint(address to, uint256 tokenId) private {
         _safeMint(to, tokenId);
+        _whitelistDidMint();
     }
 
     /**
@@ -87,7 +89,31 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
             safeMint(receiver, tokenID);
         }
     }
-    
+
+    /**
+    * @dev 鑄造後設置白名單相關參數
+    */
+    function _whitelistDidMint() private {
+        whitelist[msg.sender] = false;
+    }
+
+    /**
+    * @dev 查詢是否在白名單內
+    */
+    function _isInWhitelist(address addr) private view returns (bool){
+        return whitelist[addr];
+    }
+
+    /**
+    * @dev 查詢此地址是否可鑄造
+    */
+    function _isMintable(address addr) private view returns (bool){
+        if (addr == owner()) {
+            return true;
+        }
+        return _isInWhitelist(addr);
+    }
+
     //------------
     // public functions
     //------------
@@ -98,6 +124,7 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     function mint() public payable{
         require(msg.value >= sellPrice, "Not enough ETH sent, please check the price.");
         require(block.timestamp >= saleStartTime, "It's not on sale yet.");
+        require(_isMintable(msg.sender), "Your not in whitelist.");
         publishKnotNFT(1);
     }
 
@@ -116,6 +143,13 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     }
 
     /**
+    * @dev 查詢是否在白名單內
+    */
+    function isInWhitelist() public view returns (bool){
+        return _isInWhitelist(msg.sender);
+    }
+
+    /**
     * @dev 設定NFT售價
     * @param price 銷售價格
     */
@@ -128,5 +162,15 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     */
     function setSaleStartTime(uint256 startTime) public onlyOwner{
         saleStartTime = startTime;
+    }
+
+    /**
+    * @dev 設置白名單
+    * @param whitelistAddr 白名單地址
+    */
+    function addToWhitelist(address whitelistAddr) public onlyOwner{
+        require(whitelistAddr != address(0), "Can't add the null address.");
+        require(!_isInWhitelist(whitelistAddr), "You're aright in whitelist.");
+        whitelist[whitelistAddr] = true;
     }
 }

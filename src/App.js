@@ -9,6 +9,7 @@ function App() {
   const { data: account} = useAccount();
   const { activeChain, switchNetwork } = useNetwork( { chainId: chain.rinkeby.id });
   const { disconnect } = useDisconnect();
+  const [ addWhitelistAddress, setWhitelistAddress] = React.useState(null);
 
   /**
    * @dev 合約互動：查詢已鑄造數量
@@ -61,6 +62,45 @@ function App() {
   );
 
   /**
+   * @dev 合約互動：查詢是否在白名單
+   */
+   const { data: isInWhitelist} = useContractRead(
+    {
+      addressOrName: contractAddress,
+      contractInterface: contractABI,
+    },
+    'isInWhitelist',
+    {
+      watch: true,
+    }
+  );
+
+  const isAddressMintable = () => {
+    if (isOwner) {
+      return true;
+    }
+    return isInWhitelist;
+  };
+
+   /**
+   * @dev 合約互動：添加白名單
+   */
+  //  const { addToWhitelist } = useContractWrite(
+  //   {
+  //     addressOrName: contractAddress,
+  //     contractInterface: contractABI,
+  //   },
+  //   'addToWhitelist',
+  //   {
+  //     args: [addWhitelistAddress],
+  //     overrides: 
+  //     {
+  //       gasLimit: 3000000,
+  //       value: ethers.utils.parseEther("0.005"),
+  //     },
+  //   }
+  // );
+  /**
    * @dev 合約互動：查詢售價
    */
    const { data: sellPrice} = useContractRead(
@@ -69,6 +109,20 @@ function App() {
       contractInterface: contractABI,
     },
     'sellPrice'
+  );
+
+  /**
+   * @dev 合約互動：查詢合約擁有者
+   */
+   const { data: ownerAddress} = useContractRead(
+    {
+      addressOrName: contractAddress,
+      contractInterface: contractABI,
+    },
+    'owner',
+    {
+      watch: true,
+    }
   );
 
   const price = (sellPrice) ? ethers.utils.formatEther(sellPrice) : 0;
@@ -123,6 +177,13 @@ function App() {
     }
   }, [activeChain, switchNetwork]);
 
+  const isOwner = () => {
+    let ownerAddr = ownerAddress;
+    return (ownerAddr === account.address);
+  };
+
+  console.log("input:" + addWhitelistAddress);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -136,7 +197,7 @@ function App() {
             <h2> NFT Content：</h2>
             { totalSupply && <div> 已鑄造： { totalSupply.toNumber() } </div> }
             { accountBalance && <div> 擁有數量：{ accountBalance.toNumber() } </div> }
-            
+            <div>是否在白名單： {isInWhitelist?"Yes":"No"}</div> 
             <h2> Sales Content：</h2>
             <div> 銷售金額： {price.toString()} ETH</div>
             { maxMintCount && <div> 總發行量：{ maxMintCount.toNumber() }</div> }
@@ -145,7 +206,22 @@ function App() {
             <div>&nbsp;</div>
             {/* <button onClick={setStartSellTime}>設置開始銷售時間為10秒後</button> */}
             <div>&nbsp;</div>
-            { !isMintLoading && activeChain && <button onClick={startMintNFT}>鑄造</button> }
+            { !isMintLoading && activeChain && <button onClick={startMintNFT} disabled={!isAddressMintable()}>鑄造</button> }
+            { !isAddressMintable() && <div className="Message">不在白名單無法鑄造！</div>}
+            <hr />
+            {
+              isOwner() && <div>
+                    <h2> 合約操作 for owner：</h2>
+                    {/* <input
+                      type="text"
+                      value={addWhitelistAddress}
+                      onChange={(event) => setWhitelistAddress(event.target.value)}
+                      placeholder="input a address for whitelist"
+                    /> */}
+                    {/* { activeChain && <button onClick={addToWhitelist}>add to whitelist</button> } */}
+              </div>
+            }
+            
           </div>
         ) :     
         (

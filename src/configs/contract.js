@@ -1,4 +1,4 @@
-export const contractAddress = "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB";
+export const contractAddress = "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF";
 export const contractABI = [
     {
       "inputs": [],
@@ -103,6 +103,19 @@ export const contractABI = [
       "inputs": [
         {
           "internalType": "address",
+          "name": "whitelistAddr",
+          "type": "address"
+        }
+      ],
+      "name": "addToWhitelist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "to",
           "type": "address"
         },
@@ -182,6 +195,19 @@ export const contractABI = [
         }
       ],
       "name": "isApprovedForAll",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "isInWhitelist",
       "outputs": [
         {
           "internalType": "bool",
@@ -539,6 +565,25 @@ export const contractABI = [
       "name": "transferOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "whitelist",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     }
   ];
