@@ -192,8 +192,7 @@ function App() {
         { account ? 
         (
           <div> 
-            <button className='Wallet-button' onClick={disconnect}>Disconnect</button>
-            <div>&nbsp;</div>
+            <button className='Button' onClick={disconnect}>Disconnect</button>
             <div> 我的錢包地址: {account.address}</div>
             <hr />
             <h2> NFT Content：</h2>
@@ -205,22 +204,24 @@ function App() {
             { maxMintCount && <div> 總發行量：{ maxMintCount.toNumber() }</div> }
             { mintableCount && <div> 剩餘可售：{ mintableCount.toNumber() }</div> }
             {/* <div> 銷售倒數：</div> */}
-            <div>&nbsp;</div>
             {/* <button onClick={setStartSellTime}>設置開始銷售時間為10秒後</button> */}
             <div>&nbsp;</div>
-            { !isMintLoading && activeChain && <button onClick={startMintNFT} disabled={!isAddressMintable()}>鑄造</button> }
+            { !isMintLoading && activeChain && 
+              <button className='Button' onClick={startMintNFT} disabled={!isAddressMintable()}>Mint</button> 
+            }
             { !isAddressMintable() && <div className="Message">不在白名單無法鑄造！</div>}
             <hr />
             {
               isOwner() && <div>
-                    <h2> 合約操作 for owner：</h2>
+                    <h2>Only for contract owner：</h2>
                     {<input
+                      className='Input'
                       type="text"
                       value={addAddress}
                       onChange={(event) => setWhitelistAddress(event.target.value)}
-                      placeholder="input a address for whitelist"
+                      placeholder="Input a wallet address"
                     /> }
-                    { activeChain && <button onClick={addAddressToWhitelistButtonClick}>添加到白名單</button> }
+                    { activeChain && <button className='Button' onClick={addAddressToWhitelistButtonClick}>Add to whitelist</button> }
               </div>
             }
             
@@ -229,7 +230,7 @@ function App() {
         (
           <div> 
             {connectors.map((connector) => (
-              <button className='Wallet-button' disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
+              <button className='Button' disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
                 Connect Wallet
                 {!connector.ready && " (不支援)"}
                 {isConnecting && connector.id === pendingConnector?.id && " (連結中)"}

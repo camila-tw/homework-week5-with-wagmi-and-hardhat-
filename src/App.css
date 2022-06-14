@@ -33,14 +33,28 @@
   font-size: calc(8px+1vmin);
 }
 
-.Wallet-button {
+.Button {
   padding: 10px 30px;
+  margin: 10px 0px 20px 15px;
   font-size: 24px;
   cursor: pointer;
   border-radius: 7px;
   border-bottom-left-radius: 0;
   transition: all 0.3s;
 }
+
+.Input {
+
+  position: relative;
+  font-size: 1em;
+  background: linear-gradient(21deg, #10abff, #1beabd);
+  padding: 4px;
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 0px 0px 0px 15px;
+  /* border-radius: 9999em; */
+}
+
 
 @keyframes App-logo-spin {
   from {
@@ -50,3 +64,5 @@
     transform: rotate(360deg);
   }
 }
+
+
