@@ -2,30 +2,14 @@
   text-align: left;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #708eca;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: left;
   justify-content: left;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
 }
 
 .Message {
@@ -35,7 +19,7 @@
 
 .Button {
   padding: 10px 30px;
-  margin: 10px 0px 20px 15px;
+  margin: 5px 0px 10px 15px;
   font-size: 24px;
   cursor: pointer;
   border-radius: 7px;
@@ -44,7 +28,6 @@
 }
 
 .Input {
-
   position: relative;
   font-size: 1em;
   background: linear-gradient(21deg, #10abff, #1beabd);
@@ -54,15 +37,3 @@
   margin: 0px 0px 0px 15px;
   /* border-radius: 9999em; */
 }
-
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-

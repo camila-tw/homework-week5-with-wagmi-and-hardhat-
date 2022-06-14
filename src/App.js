@@ -1,6 +1,6 @@
 import './App.css';
 import { useAccount, useConnect, useNetwork, chain, useDisconnect, useContractRead, useContractWrite} from "wagmi";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { contractABI, contractAddress } from "./configs/contract.js";
 import {ethers} from "ethers";
 
@@ -145,32 +145,61 @@ function App() {
   );
   const startMintNFT = () => { mint() };
 
-  // const getSellTime = () => {
-  //   let today = new Date();
-  //   today.setDate(today.getSeconds() + 10); // add 10 seconds
-  //   return Math.floor(today.getTime() / 1000); // unix timestamp
-  // };
+ 
 
-  // console.log("sell time: " + getSellTime());
+  const getSellStartTime = () => {
+    let today = new Date();
+    today.setSeconds(today.getSeconds() + 20); // add 10 seconds
+    return Math.round(today.getTime() / 1000); // unix timestamp
+  };
 
-  //  /**
-  //  * @dev 合約互動：設置開始銷售時間
-  //  */
-  //  const { write: setSaleStartTime} = useContractWrite(
-  //   {
-  //     addressOrName: contractAddress,
-  //     contractInterface: contractABI,
-  //   },
-  //   'setSaleStartTime',
-  //   {
-  //     overrides: {
-  //       value: getSellTime(),
-  //     },
-  //   }
-  // );
-  // const setStartSellTime = () => {
-  //   setSaleStartTime();
-  // };
+   /**
+   * @dev 合約互動：設置開始銷售時間
+   */
+   const { write: setSaleStartTime } = useContractWrite(
+    {
+      addressOrName: contractAddress,
+      contractInterface: contractABI,
+    },
+    'setSaleStartTime',
+    {
+      args:[getSellStartTime()]
+    }
+  );
+  const setStartSellTime = () => {
+    setSaleStartTime();
+  };
+
+  /**
+   * @dev 合約互動：查詢銷售開始時間
+   */
+   const { data: saleStartTime} = useContractRead(
+    {
+      addressOrName: contractAddress,
+      contractInterface: contractABI,
+    },
+    'saleStartTime',
+    {
+      watch: true,
+    }
+  );
+  
+  const [sellTimer, setSellTimer] = useState(0);
+  useEffect(
+    () => {
+      const id = setInterval(() => {
+        const dateTime = Date.now();
+        const timestamp = Math.floor(dateTime / 1000);
+        const minus = saleStartTime.sub(ethers.BigNumber.from(timestamp)).toString()
+        setSellTimer(minus)
+      }, 1000);
+
+      return () => {
+        clearInterval(id);
+      };
+    },
+    [saleStartTime] 
+  );
 
   useEffect(() => {
     if (activeChain && activeChain.id !== chain.localhost.id) {
@@ -203,8 +232,7 @@ function App() {
             <div> 銷售金額： {price.toString()} ETH</div>
             { maxMintCount && <div> 總發行量：{ maxMintCount.toNumber() }</div> }
             { mintableCount && <div> 剩餘可售：{ mintableCount.toNumber() }</div> }
-            {/* <div> 銷售倒數：</div> */}
-            {/* <button onClick={setStartSellTime}>設置開始銷售時間為10秒後</button> */}
+            <div> 銷售倒數： {(sellTimer < 0 ? "已開賣" : sellTimer)} </div>
             <div>&nbsp;</div>
             { !isMintLoading && activeChain && 
               <button className='Button' onClick={startMintNFT} disabled={!isAddressMintable()}>Mint</button> 
@@ -212,17 +240,13 @@ function App() {
             { !isAddressMintable() && <div className="Message">不在白名單無法鑄造！</div>}
             <hr />
             {
-              isOwner() && <div>
+              isOwner() && 
+                (<div>
                     <h2>Only for contract owner：</h2>
-                    {<input
-                      className='Input'
-                      type="text"
-                      value={addAddress}
-                      onChange={(event) => setWhitelistAddress(event.target.value)}
-                      placeholder="Input a wallet address"
-                    /> }
+                    <div><button className='Button' onClick={setStartSellTime} >重置開賣時間</button></div>
+                    {<input className='Input' type="text" value={addAddress} onChange={(event) => setWhitelistAddress(event.target.value)} placeholder="Input a wallet address" />}
                     { activeChain && <button className='Button' onClick={addAddressToWhitelistButtonClick}>Add to whitelist</button> }
-              </div>
+                </div>)
             }
             
           </div>

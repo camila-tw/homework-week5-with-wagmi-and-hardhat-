@@ -2,7 +2,7 @@
 + 使用 Wagmi 來串連自己撰寫的 ERC721
 + 使用 Hardhat 並透過本地測試鏈來與 Metamask 連結，實現 Dapp 互動
 
-[Demo網址](https://62a873985be60915e7cdb604--camila-krypto-homework-week5.netlify.app)
+[Demo網址](https://62a883de60770c21885a4beb--camila-krypto-homework-week5.netlify.app)
 
 ### 網頁截圖
 ![image](https://user-images.githubusercontent.com/6125187/173554052-1d1c4344-5ea2-44c3-a6e8-f62aeda47b41.png)
@@ -17,7 +17,7 @@
     - [x] 銷售金額
     - [x] 帳戶已鑄造
     - [x] 切換地址顯示已鑄造數量
-    - [ ] 銷售時間(合約已實現，前端未串接)
+    - [x] 銷售時間
 + 交互  
     - [x] 鑄造
 
@@ -31,6 +31,7 @@
 #### Others
 - [x] 判斷是否是合約擁有者
 - [x] 合約擁有者才能添加白名單
+- [x] 重置銷售倒計時
 
 
 
