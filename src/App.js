@@ -229,8 +229,8 @@ function App() {
         (
           <div> 
             {connectors.map((connector) => (
-              <button disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
-                {connector.name}
+              <button className='connect-to-wallet-button' disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
+                Connect to wallet on {connector.name}
                 {!connector.ready && " (不支援)"}
                 {isConnecting && connector.id === pendingConnector?.id && " (連結中)"}
               </button>
