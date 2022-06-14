@@ -5,7 +5,7 @@
 [Demo網址](https://62a873985be60915e7cdb604--camila-krypto-homework-week5.netlify.app)
 
 ### 網頁截圖
-![](https://i.imgur.com/iPVGHb8.png)
+![image](https://user-images.githubusercontent.com/6125187/173554052-1d1c4344-5ea2-44c3-a6e8-f62aeda47b41.png)
 
 ---
 ### 作業內容
