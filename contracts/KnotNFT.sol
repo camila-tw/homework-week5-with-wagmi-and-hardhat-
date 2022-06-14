@@ -25,68 +25,58 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     //鑄造指定NFT
     constructor() ERC721("Knot NFT", "KNFT") {
         sellPrice = KNFT_SELL_PRICE;
-
     }
 
     //------------
     //override
     //------------
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Enumerable)
-    {
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    function _afterTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721) {
+        super._afterTokenTransfer(from, to, tokenId);
+
+        //通知白名單已鑄造
+        _whitelistDidMint();
     }
 
     //------------
     // private functions
     //------------
-    
-    /**
-    * @dev 鑄造, 只有合約擁有者可以使用此方法。
-    * @param to 指定地址
-    * @param tokenId NFT ID
-    */
-    function safeMint(address to, uint256 tokenId) private {
-        _safeMint(to, tokenId);
-        _whitelistDidMint();
-    }
 
     /**
-    * @dev 剩餘可鑄造數量是否可以再接受新的鑄造數量
+    * @dev 判斷是否可鑄造
+    * @param amount 鑄造數量
     * @return result 是否可鑄造
     */
-    function isMintable(uint256 amount) view private returns (bool result){
-       return mintableCount() > amount;
+    function _isMintable(uint256 amount) view private returns (bool result){
+        require(amount > 0, "KnotNFT: amount can't be zero.");
+        require(_isMintableAddress(msg.sender), "KnotNFT: Your not in whitelist.");
+        require(msg.value >= sellPrice, "KnotNFT: Not enough ETH sent, please check the price.");
+        require(block.timestamp >= saleStartTime, "KnotNFT: It's not on sale yet.");
+        return mintableCount() > amount;
     }
 
     /**
     * @dev 發行NFT, 設置總量, 只有合約擁有者可以使用此方法。
+    * @param receiver 指定接收者
     * @param amount 發行量
     */
-    function publishKnotNFT(uint256 amount) private {
-        publishKnotNFT(amount, msg.sender);
-    }
-
-    /**
-    * @dev 發行NFT, 設置總量, 只有合約擁有者可以使用此方法。
-    * @param amount 指定接收者
-    * @param amount 發行量
-    */
-    function publishKnotNFT(uint256 amount, address receiver) private {
-        require(amount > 0, unicode"KnotNFT: 鑄造需大於0");
-        require(receiver != address(0), "KnotNFT: mint to the zero address");
+    function _publishKnotNFT(uint256 amount, address receiver) private { 
+        require(receiver != address(0), "KnotNFT: mint to the zero address.");
 
         //檢查是否可以鑄造
-        require(isMintable(amount), unicode"KnotNFT: 發行總量超過上限");
+        require(_isMintable(amount), "KnotNFT: token can't mint.");
 
         for(uint256 i = 0; i < amount; i++) {
             uint256 tokenID = _currentMintCount++;
-            safeMint(receiver, tokenID);
+            _safeMint(receiver, tokenID);
         }
     }
 
@@ -99,12 +89,13 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
 
     /**
     * @dev 查詢此地址是否可鑄造
+    * @param mintAddress 鑄造者
     */
-    function _isMintable(address addr) private view returns (bool){
-        if (addr == owner()) {
+    function _isMintableAddress(address mintAddress) private view returns (bool) {
+        if (mintAddress == owner()) {
             return true;
         }
-        return isInWhitelist(addr);
+        return isInWhitelist(mintAddress);
     }
 
     //------------
@@ -114,24 +105,21 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     /**
     * @dev 鑄造單一NFT
     */
-    function mint() public payable{
-        require(msg.value >= sellPrice, "Not enough ETH sent, please check the price.");
-        require(block.timestamp >= saleStartTime, "It's not on sale yet.");
-        require(_isMintable(msg.sender), "Your not in whitelist.");
-        publishKnotNFT(1);
+    function mint() public payable {
+        _publishKnotNFT(1, msg.sender);
     }
 
     /**
     * @dev 查詢剩餘可鑄造數量
     */
-    function mintableCount() public view returns (uint256 count){
+    function mintableCount() public view returns (uint256 count) {
         return MAX_MINT_COUNT - _currentMintCount;
     }
 
     /**
     * @dev 查詢總發行上限
     */
-    function maxMintCount() public pure returns (uint256 count){
+    function maxMintCount() public pure returns (uint256 count) {
         return MAX_MINT_COUNT;
     }
 
@@ -146,14 +134,14 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     * @dev 設定NFT售價
     * @param price 銷售價格
     */
-    function setSellPrice(uint256 price) public onlyOwner{
+    function setSellPrice(uint256 price) public onlyOwner {
         sellPrice = price;
     }
 
     /**
     * @dev 設置銷售時間
     */
-    function setSaleStartTime(uint256 startTime) public onlyOwner{
+    function setSaleStartTime(uint256 startTime) public onlyOwner {
         saleStartTime = startTime;
     }
 
@@ -161,7 +149,7 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     * @dev 設置白名單
     * @param whitelistAddr 白名單地址
     */
-    function addToWhitelist(address whitelistAddr) public onlyOwner{
+    function addToWhitelist(address whitelistAddr) public onlyOwner {
         require(whitelistAddr != address(0), "Can't add the null address.");
         require(!isInWhitelist(whitelistAddr), "You're aright in whitelist.");
         _whitelist[whitelistAddr] = true;
