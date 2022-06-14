@@ -192,7 +192,7 @@ function App() {
         { account ? 
         (
           <div> 
-            <button onClick={disconnect}>取消連結</button>
+            <button className='Wallet-button' onClick={disconnect}>Disconnect</button>
             <div>&nbsp;</div>
             <div> 我的錢包地址: {account.address}</div>
             <hr />
@@ -229,8 +229,8 @@ function App() {
         (
           <div> 
             {connectors.map((connector) => (
-              <button className='connect-to-wallet-button' disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
-                Connect to wallet on {connector.name}
+              <button className='Wallet-button' disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
+                Connect Wallet
                 {!connector.ready && " (不支援)"}
                 {isConnecting && connector.id === pendingConnector?.id && " (連結中)"}
               </button>

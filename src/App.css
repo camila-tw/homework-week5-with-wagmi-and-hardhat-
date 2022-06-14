@@ -33,7 +33,7 @@
   font-size: calc(8px+1vmin);
 }
 
-.connect-to-wallet-button {
+.Wallet-button {
   padding: 10px 30px;
   font-size: 24px;
   cursor: pointer;
