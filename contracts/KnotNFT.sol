@@ -20,7 +20,7 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     uint256 _currentMintCount = 0;                  //當前已經mint的數量
     uint256 public sellPrice;                       //NFT售價
     uint256 public saleStartTime;                   //開始販售時間
-    mapping(address => bool) public whitelist;      //白名單
+    mapping(address => bool) _whitelist;            //白名單
     
     //鑄造指定NFT
     constructor() ERC721("Knot NFT", "KNFT") {
@@ -94,14 +94,7 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     * @dev 鑄造後設置白名單相關參數
     */
     function _whitelistDidMint() private {
-        whitelist[msg.sender] = false;
-    }
-
-    /**
-    * @dev 查詢是否在白名單內
-    */
-    function _isInWhitelist(address addr) private view returns (bool){
-        return whitelist[addr];
+        _whitelist[msg.sender] = false;
     }
 
     /**
@@ -111,7 +104,7 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
         if (addr == owner()) {
             return true;
         }
-        return _isInWhitelist(addr);
+        return isInWhitelist(addr);
     }
 
     //------------
@@ -145,8 +138,8 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     /**
     * @dev 查詢是否在白名單內
     */
-    function isInWhitelist() public view returns (bool){
-        return _isInWhitelist(msg.sender);
+    function isInWhitelist(address addr) public view returns (bool){
+        return _whitelist[addr];
     }
 
     /**
@@ -170,7 +163,7 @@ contract KnotNFT is ERC721, ERC721Enumerable, Ownable, ERC721Burnable{
     */
     function addToWhitelist(address whitelistAddr) public onlyOwner{
         require(whitelistAddr != address(0), "Can't add the null address.");
-        require(!_isInWhitelist(whitelistAddr), "You're aright in whitelist.");
-        whitelist[whitelistAddr] = true;
+        require(!isInWhitelist(whitelistAddr), "You're aright in whitelist.");
+        _whitelist[whitelistAddr] = true;
     }
 }

@@ -71,6 +71,7 @@ function App() {
     },
     'isInWhitelist',
     {
+      args: [account?.address],
       watch: true,
     }
   );

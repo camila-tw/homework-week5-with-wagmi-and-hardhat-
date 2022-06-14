@@ -1,4 +1,4 @@
-export const contractAddress = "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF";
+export const contractAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
 export const contractABI = [
     {
       "inputs": [],
@@ -206,7 +206,13 @@ export const contractABI = [
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
       "name": "isInWhitelist",
       "outputs": [
         {
@@ -565,25 +571,6 @@ export const contractABI = [
       "name": "transferOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "whitelist",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     }
   ];

@@ -2,7 +2,7 @@
 + 使用 Wagmi 來串連自己撰寫的 ERC721
 + 使用 Hardhat 並透過本地測試鏈來與 Metamask 連結，實現 Dapp 互動
 
-[Demo網址](https://62a751806c35cc008f3c5fd2--camila-krypto-homework-week5.netlify.app)
+[Demo網址](https://62a8279060770c547b5a4bad--camila-krypto-homework-week5.netlify.app)
 
 ### 網頁截圖
 ![](https://i.imgur.com/iPVGHb8.png)
@@ -23,7 +23,7 @@
 
 #### 進階
 + 白名單
-    - [ ] 是否在白名單(Issue:合約交互數據不一致，導致前端判斷邏輯有問題。)
+    - [x] 是否在白名單
     - [x] 判斷是否在白名單可否mint
     - [x] 添加白名單地址
     - [x] 鑄造後移除白名單
